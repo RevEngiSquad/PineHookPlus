@@ -1,11 +1,15 @@
 package com.pinehook.plus;
 
+import static com.pinehook.plus.Loader.dexKitBridge;
+
+import kotlin.Pair;
 import top.canyie.pine.Pine;
 import top.canyie.pine.callback.MethodReplacement;
 import top.canyie.pine.callback.MethodHook;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,39 +29,61 @@ public class Hook {
 
                     if (Objects.equals(methodName, "constructor")) {
                         Constructor<?> constructor = getConstructor(clazz, methodName, methodDetails);
-
                         Log.d(TAG, "Hooking constructor in class: " + clazz.getName());
 
+                        Class<?> finalClazz = clazz;
                         Pine.hook(constructor, new MethodHook() {
                             @Override
                             public void beforeCall(Pine.CallFrame callFrame) throws Throwable {
-                                Log.d(TAG, "Before constructor call: " + clazz.getName());
+                                Log.d(TAG, "Before constructor call: " + finalClazz.getName());
                                 handleBeforeCall(callFrame, methodDetails);
                             }
 
                             @Override
                             public void afterCall(Pine.CallFrame callFrame) throws Throwable {
-                                Log.d(TAG, "After constructor call: " + clazz.getName());
+                                Log.d(TAG, "After constructor call: " + finalClazz.getName());
                                 handleAfterCall(callFrame, methodDetails);
                             }
                         });
+                    } else {
+                        if (Boolean.TRUE.equals(methodDetails.get("pattern"))) {
+                            DexKitMatcher matcher = new DexKitMatcher();
+                            int paramCount = methodDetails.containsKey("paramCount") ? (int) methodDetails.get("paramCount") : 0;
+                            String returnType = (String) methodDetails.get("returnType");
+                            String modifierType = (String) methodDetails.get("modifier");
+                            List<String> paramTypesList = (List<String>) methodDetails.get("paramTypes");
+                            String[] paramTypes = paramTypesList != null ? paramTypesList.toArray(new String[0]) : new String[0];
+                            String[] usingStrings = methodDetails.containsKey("usingStrings")
+                                    ? new String[]{(String) methodDetails.get("usingStrings")}
+                                    : new String[0];
+                            int[] usingNumbers = methodDetails.containsKey("usingNumbers")
+                                    ? (int[]) methodDetails.get("usingNumbers")
+                                    : new int[0];
 
-                    } else  if (!Objects.equals(methodName, "constructor")){
+
+                            int modifier = getModifiers(modifierType);
+                            Pair<String, String> methodData = matcher.findMethods(
+                                    dexKitBridge, modifier, returnType, paramTypes, paramCount, usingStrings, usingNumbers
+                            );
+                            methodName = methodData.getFirst();
+                            clazz = Class.forName(methodData.getSecond());
+                        }
+
                         Method method = getMethod(clazz, methodName, methodDetails);
-
                         Log.d(TAG, "Hooking method: " + methodName + " in class: " + clazz.getName());
 
                         if (methodDetails.containsKey("before") || methodDetails.containsKey("after")) {
+                            String finalMethodName = methodName;
                             Pine.hook(method, new MethodHook() {
                                 @Override
                                 public void beforeCall(Pine.CallFrame callFrame) throws Throwable {
-                                    Log.d(TAG, "Before call: " + methodName);
+                                    Log.d(TAG, "Before call: " + finalMethodName);
                                     handleBeforeCall(callFrame, methodDetails);
                                 }
 
                                 @Override
                                 public void afterCall(Pine.CallFrame callFrame) throws Throwable {
-                                    Log.d(TAG, "After call: " + methodName);
+                                    Log.d(TAG, "After call: " + finalMethodName);
                                     handleAfterCall(callFrame, methodDetails);
                                 }
                             });
@@ -71,6 +97,20 @@ public class Hook {
             Log.e(TAG, "Error during hooking", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private static int getModifiers(String modifier) {
+        switch (modifier) {
+            case "public":
+                return Modifier.PUBLIC;
+            case "private":
+                return Modifier.PRIVATE;
+            case "protected":
+                return Modifier.PROTECTED;
+            case "static":
+                return Modifier.STATIC;
+        }
+        return 0;
     }
 
     private static Method getMethod(Class<?> clazz, String methodName, Map<String, Object> methodDetails) throws NoSuchMethodException {

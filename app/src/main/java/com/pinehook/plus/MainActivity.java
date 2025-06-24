@@ -3,6 +3,7 @@ package com.pinehook.plus;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Test yetAnotherMethod
         boolean yetAnotherMethodResult = yetAnotherMethod();
-        result.append("yetAnotherMethod(): ").append(yetAnotherMethodResult).append("\n");
-        Log.d(TAG, "yetAnotherMethod() called, returned: " + yetAnotherMethodResult);
+        result.append("yetAnotherMethod(false): ").append(yetAnotherMethodResult).append("\n");
+        Log.d(TAG, "yetAnotherMethod() [default ret: false] called, returned: " + yetAnotherMethodResult);
 
         // Test method with only before hook
         String beforeOnlyResult = beforeOnlyMethod("before");
@@ -42,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
         String afterOnlyResult = afterOnlyMethod("after");
         result.append("afterOnlyMethod(\"after\"): ").append(afterOnlyResult).append("\n");
         Log.d(TAG, "afterOnlyMethod(\"after\") called with args: \"after\", returned: " + afterOnlyResult);
+
+        // Test patternMethod
+        int patternMethodResult = patternMethod(43);
+        result.append("patternMethod(43): ").append(patternMethodResult).append("\n");
+        Log.d(TAG, "patternMethod() called with args: 43, returned: " + patternMethodResult);
 
         Log.d(TAG, "ConstructorClass called with args: false, null, false, 0, 0, null, null, null");
         new ConstructorClass(false, null, false, 0L, 0L, null, null, null);
@@ -71,5 +77,10 @@ public class MainActivity extends AppCompatActivity {
     public String afterOnlyMethod(String input) {
         Log.d(TAG, "afterOnlyMethod called with input: " + input);
         return input;
+    }
+
+    public int patternMethod(int number) {
+        Log.d(TAG, "patternMethod called with input: " + number);
+        return number;
     }
 }

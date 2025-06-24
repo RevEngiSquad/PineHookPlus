@@ -14,6 +14,24 @@
                 "result": false
             }
         },
+        "patternMethod": {
+            "pattern": true,
+            "returnType": "int",
+            "modifier": "public",
+            "paramCount": 1,
+            "usingStrings": "patternMethod called",
+            "paramTypes": [
+                "int"
+            ],
+            "before": {
+                "args": [
+                    10
+                ]
+            },
+            "after": {
+                "result": 20
+            }
+        },
         "anotherMethod": {
             "paramTypes": [
                 "int"
@@ -33,7 +51,7 @@
                 "result": true
             },
             "after": {
-                "result": false
+                "result": true
             }
         },
         "beforeOnlyMethod": {

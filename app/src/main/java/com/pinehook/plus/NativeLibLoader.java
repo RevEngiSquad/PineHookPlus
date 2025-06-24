@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 
-import androidx.annotation.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,20 +13,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Objects;
+
 import org.json.JSONObject;
 
 public class NativeLibLoader {
     @SuppressLint("UnsafeDynamicallyLoadedCode")
-    public static void loadNativeLib(Context context, String libName) {
-        String arch = getArch();
+    public static void loadNativeLib(Context context, String baseLibName) {
+        String archSuffix = getArchSuffix();
+        String libName = baseLibName + archSuffix;
         try {
             File targetFile = new File(context.getFilesDir(), libName);
 
             if (!targetFile.exists()) {
-                String resourcePath = "hook/" + arch;
-                InputStream inputStream = context.getClassLoader().getResourceAsStream(resourcePath);
+                InputStream inputStream = context.getClassLoader().getResourceAsStream("hook/" + libName);
                 if (inputStream == null) {
-                    throw new RuntimeException("Library file not found: " + resourcePath);
+                    throw new RuntimeException("Library file not found: " + "hook/" + libName);
                 }
 
                 if (!Objects.requireNonNull(targetFile.getParentFile()).mkdirs() && !targetFile.getParentFile().exists()) {
@@ -69,7 +70,7 @@ public class NativeLibLoader {
         }
     }
 
-    @NonNull
+    @NotNull
     private static String getString(InputStream inputStream, String configPath) throws IOException {
         if (inputStream == null) {
             throw new RuntimeException("Config file not found: " + configPath);
@@ -84,18 +85,22 @@ public class NativeLibLoader {
         return jsonBuilder.toString();
     }
 
-    static String getArch() {
+    static String getArchSuffix() {
         String[] supportedAbis;
         supportedAbis = Build.SUPPORTED_ABIS;
 
         for (String abi : supportedAbis) {
             if (abi.contains("arm64-v8a")) {
-                return "libpine64";
+                return "64";
             } else if (abi.contains("armeabi-v7a")) {
-                return "libpine32";
+                return "32";
             }
         }
-
         throw new RuntimeException("Unsupported architecture");
+    }
+
+    public static void load(Context context) {
+        loadNativeLib(context, "libdexkit");
+        loadNativeLib(context, "libpine");
     }
 }

@@ -5,6 +5,10 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
+pine = "0.3.0"
+dexkit = "2.0.6"
+kotlin = "2.0.21"
+coreKtx = "1.16.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -12,8 +16,9 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitV
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-pine = { group = "top.canyie.pine", name = "core", version = "0.3.0" }
-
+pine = { group = "top.canyie.pine", name = "core", version.ref = "pine" }
+dexkit = { group = "org.luckypray", name = "dexkit", version.ref = "dexkit" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

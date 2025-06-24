@@ -24,6 +24,8 @@
 -keep class com.pinehook.plus.MainActivity {
     public boolean argMethod(boolean);
     public int anotherMethod(int);
+    public int patternMethod(int);
+    public int patternMethodField();
     public boolean yetAnotherMethod();
     public java.lang.String beforeOnlyMethod(java.lang.String);
     public java.lang.String afterOnlyMethod(java.lang.String);
