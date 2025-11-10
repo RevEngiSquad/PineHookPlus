@@ -1,5 +1,7 @@
 package com.pinehook.plus;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -46,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "ConstructorClass called with args: false, null, false, 0, 0, null, null, null");
         new ConstructorClass(false, null, false, 0L, 0L, null, null, null);
         textView.setText(result.toString());
+
+        boolean vpnStatus = detectVpn();
+        Log.d(TAG, "VPN Status: " + vpnStatus);
+        textView.setText(result + "VPN Status: " + vpnStatus);
     }
 
     public boolean argMethod(boolean input) {
@@ -71,5 +77,18 @@ public class MainActivity extends AppCompatActivity {
     public String afterOnlyMethod(String input) {
         Log.d(TAG, "afterOnlyMethod called with input: " + input);
         return input;
+    }
+
+    public boolean detectVpn() {
+        Log.d(TAG, "detectVpn called");
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+        if (capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
+            Log.d(TAG, "VPN is active.");
+            return true;
+        } else {
+            Log.d(TAG, "VPN is not active.");
+            return false;
+        }
     }
 }

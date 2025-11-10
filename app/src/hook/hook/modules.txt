@@ -1,0 +1,5 @@
+# Place your xposed modules names here
+# for example if you've placed 'novpndetect.apk' under this <hook> directory then add:
+# novpndetect.apk
+# ofcourse without '#' at the beginning of the line
+# NOTE: Modules that use unsupported features (e.g. Resources hook or XSharedPreferences) will not work.

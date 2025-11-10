@@ -2,6 +2,7 @@ package com.pinehook.plus;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
@@ -17,11 +18,14 @@ public class Loader extends ContentProvider {
     @Override
     public boolean onCreate() {
         try {
-            if (getContext() != null) {
+            Context context = getContext();
+            if (context != null) {
                 Log.d(TAG, "Loading native library");
-                NativeLibLoader.loadNativeLib(getContext(), "libpine.so");
+                NativeLibLoader.loadNativeLib(context, "libpine.so");
+                Log.d(TAG, "Loading modules");
+                Hook.loadModules(context);
                 Log.d(TAG, "Loading config");
-                Map<String, Map<String, Object>> config = NativeLibLoader.loadConfig(getContext());
+                Map<String, Map<String, Object>> config = NativeLibLoader.loadConfig(context);
                 Log.d(TAG, "Executing hook");
                 Hook.doHook(config);
                 Log.d(TAG, "Hook executed successfully");

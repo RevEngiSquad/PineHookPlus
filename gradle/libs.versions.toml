@@ -13,6 +13,7 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 pine = { group = "top.canyie.pine", name = "core", version = "0.3.0" }
+pine-exposed = { group = "top.canyie.pine", name = "xposed", version = "0.2.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

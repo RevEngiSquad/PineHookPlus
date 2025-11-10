@@ -62,6 +62,7 @@ android {
 
 dependencies {
     implementation(libs.pine)
+    implementation(libs.pine.exposed)
 
     implementation(libs.appcompat)
     implementation(libs.material)

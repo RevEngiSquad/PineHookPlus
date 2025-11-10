@@ -47,3 +47,6 @@
 -keep class com.pinehook.plus.JsonParser {
     public static java.util.Map parseConfig(org.json.JSONObject);
 }
+
+# Keep Xposed APIs
+-keep class de.robv.android.xposed.** { *; }
